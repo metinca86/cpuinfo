@@ -1,29 +1,46 @@
 import QtQuick 2.6
+import QtQuick.Controls 1.4
+import Backend 1.0
 
 Rectangle {
-    property alias mouseArea: mouseArea
-    property alias textEdit: textEdit
+    id: rectangle
 
-    width: 360
-    height: 360
+    width: 640
+    height: 480
+    antialiasing: true
 
-    MouseArea {
-        id: mouseArea
-        anchors.fill: parent
+    property alias cbProcessors: cbProcessors
+    property alias cpuInfoModel: cpuInfoModel
+
+    CpuInfoModel {
+        id: cpuInfoModel
     }
 
-    TextEdit {
-        id: textEdit
-        text: qsTr("Enter some text...")
-        verticalAlignment: Text.AlignVCenter
+    ComboBox {
+        id: cbProcessors
+        anchors.left: parent.left
+        anchors.leftMargin: 258
+        anchors.right: parent.right
+        anchors.rightMargin: 258
+        activeFocusOnPress: true
         anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: 20
-        Rectangle {
-            anchors.fill: parent
-            anchors.margins: -10
-            color: "transparent"
-            border.width: 1
-        }
+        anchors.topMargin: 15
+    }
+
+    ListView {
+        id: listView
+        x: 0
+        y: 46
+        width: 640
+        height: 434
+        anchors.rightMargin: 10
+        anchors.leftMargin: 10
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        anchors.top: cbProcessors.bottom
+        anchors.topMargin: 6
+        anchors.left: parent.left
+        model: cpuInfoModel
+        delegate: Text {text: display}
     }
 }
