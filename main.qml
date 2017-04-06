@@ -1,6 +1,7 @@
 import QtQuick 2.6
 import QtQuick.Window 2.2
 import QtQuick.Controls 2.1
+import QtQuick.Layouts 1.1
 
 Window {
     visible: true
@@ -9,7 +10,7 @@ Window {
     width: 640
     height: 680
     title: qsTr("CPU Info")
-    minimumWidth: 640
+//    minimumWidth: 640
     minimumHeight: 480
 
     MainForm {
@@ -19,55 +20,64 @@ Window {
         cbProcessors.onCurrentIndexChanged: cpuInfoModel.setCBIndex(cbProcessors.currentIndex)
         tfSearch.onTextChanged: proxyModel.setFilterWildcard(tfSearch.text)
 
-
-        // set a background color for listview items
-        // elideRight text if it is too long
-        // show a tooltip of hovered item
         Component {
-                id: myDelegate
-                Rectangle {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    height: 25
-                    color: "lightgrey"
-                    border.color: "black"
+            id: myDelegate
+
+            Rectangle {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: 25
+                color: "lightgrey"
+                border.color: "black"
+                width: parent.width
+
+                // displayed text in listview
+                // elideRight text if it is too long
+                Text {
+                    id: displayText
+                    text: display
                     width: parent.width
+                    elide: Text.ElideRight
+                    anchors.centerIn: parent
+                    horizontalAlignment:Text.AlignHCenter
+                    visible: true
+                }
+
+                MouseArea {
+                    id: mouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                }
+
+                // whenever the mouseArea gets hovered
+                // it shall make the popup visible or not
+                Connections {
+                    target: mouseArea
+                    // makes the popup visible if the listview text is truncated/elided
+                    onEntered: {popup.visible = displayText.truncated}
+                    onExited: {popup.visible=false}
+                }
+
+                // a Popup which is used as a tooltip
+                // it displays a lsitview item if it is too long
+                Popup {
+                    id: popup
+
+                    contentWidth: popUpText.width
+                    contentHeight: popUpText.height
+
+                    x: mouseArea.mouseX +10
+                    y: mouseArea.mouseY +10
 
                     Text {
-                        id: displayText
+                        id: popUpText
                         text: display
-                        width: parent.width
-                        elide: Text.ElideRight
-                        anchors.centerIn: parent
-                        horizontalAlignment:Text.AlignHCenter
-                    }
-
-                    Text {
-                        id: toolTipText
-                        text: display
-                        width: parent.width
+                        width: 150
+                        maximumLineCount: 20
                         wrapMode: Text.WordWrap
-                        visible: false
-                    }
-
-                    MouseArea {
-                        id: mouseArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                    }
-
-                    ToolTip {
-                        id: toolTip
-                        text: toolTipText.text
-
-                        Connections {
-                            target: mouseArea
-                            onEntered: {toolTip.visible=true}
-                            onExited: {toolTip.visible=false}
-                        }
-
                     }
                 }
+            }
         }
     }
 }
