@@ -7,7 +7,6 @@ Cpu informations will be read at starting. There is no update during runtime
 
 Requirements for building the application:
 C++11, Qt5, QtQuick 2.6
-No environment arguments are needed.
 
 How to Run:
-just start ~build/CpuInfo
+just start ~build/CpuInfo. No environment arguments are needed.
