@@ -6,9 +6,6 @@
 
 CpuInfoModel::CpuInfoModel(QObject *parent)
     : QStringListModel(parent)
-    , m_hashData()
-    , m_currentIndex(0)
-    , m_processeorsData()
 {
     // Read informations of /proc/cpuinfo
     QProcess process;
@@ -22,26 +19,25 @@ CpuInfoModel::CpuInfoModel(QObject *parent)
     // every section ends with double new line
     QStringList listAll{strAll.split("\n\n", QString::SkipEmptyParts)};
 
-    // Create a Hash which includes a List of Pairs
-    // specifying Keys and Values of every single line
+    // the data of processor is needed for a ComboBox which is selectable
+    // so put it to a separate stringlist -> m_processorsList
+    // all other data is relevant for the model and listview -> m_hashData
     m_hashData.reserve(listAll.count());
+    QStringList tempList;
+    for (int key = 0; key < listAll.count(); ++key) {
+        tempList.clear();
 
-    // split the sectioned strings into every single line
-    for (qint8 i = 0; i < listAll.count(); ++i) {
-        QStringList list;
-
-        for (const auto& str : listAll.at(i).split("\n"))
+        for (const auto& str : listAll.at(key).split("\n"))
         {
-
             if (str.contains("processor")){
-                m_processeorsData.append(str);
+                m_processorsList.append(str);
             }
             else {
-                list.append(str);
+                tempList.append(str);
             }
         }
 
-        m_hashData.insert(i, list);
+        m_hashData.insert(key, tempList);
     }
 }
 
@@ -50,7 +46,7 @@ int CpuInfoModel::rowCount(const QModelIndex &parent) const
     if (parent.isValid())
         return 0;
 
-    return stringList().count();
+    return m_curDataList.count();
 }
 
 QVariant CpuInfoModel::data(const QModelIndex &index, int role) const
@@ -60,20 +56,22 @@ QVariant CpuInfoModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    return stringList().at(index.row());
+    if (index.row() > m_curDataList.count()-1)
+        return QVariant();
+
+    return m_curDataList.at(index.row());
 }
 
 void CpuInfoModel::setCBIndex(int currentIndex)
 {
     if (m_hashData.contains(currentIndex))
     {
-        m_currentIndex = currentIndex;
-        setStringList(m_hashData.value(currentIndex));
+        m_curDataList = m_hashData.value(currentIndex);
+        setStringList(m_curDataList);
     }
-
 }
 
 QStringList CpuInfoModel::getProcessorsList() const
 {
-    return m_processeorsData;
+    return m_processorsList;
 }
