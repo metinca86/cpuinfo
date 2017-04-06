@@ -1,7 +1,6 @@
 import QtQuick 2.6
 import QtQuick.Window 2.2
 import QtQuick.Controls 2.1
-import QtQuick.Layouts 1.1
 
 Window {
     visible: true
@@ -10,8 +9,8 @@ Window {
     width: 640
     height: 680
     title: qsTr("CPU Info")
-//    minimumWidth: 640
-    minimumHeight: 480
+    minimumWidth: 150
+    minimumHeight: 150
 
     MainForm {
         anchors.fill: parent
@@ -36,11 +35,10 @@ Window {
                 Text {
                     id: displayText
                     text: display
-                    width: parent.width
+                    width: parent.width / 2
                     elide: Text.ElideRight
                     anchors.centerIn: parent
                     horizontalAlignment:Text.AlignHCenter
-                    visible: true
                 }
 
                 MouseArea {
@@ -58,8 +56,7 @@ Window {
                     onExited: {popup.visible=false}
                 }
 
-                // a Popup which is used as a tooltip
-                // it displays a lsitview item if it is too long
+                // popup displays a listview item if it is too long
                 Popup {
                     id: popup
 
