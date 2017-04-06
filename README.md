@@ -9,4 +9,4 @@ Requirements for building the application:
 C++11, Qt5, QtQuick 2.6
 
 How to Run:
-just start ~build/CpuInfo. No environment arguments are needed.
+just start ~build/CpuInfo. No command line arguments are needed.
